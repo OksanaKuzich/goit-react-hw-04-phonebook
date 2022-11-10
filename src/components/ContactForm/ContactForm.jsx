@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useState } from 'react';
 import {
   FormStyles,
   LabelStyles,
@@ -7,33 +7,28 @@ import {
   ButtonAdd,
 } from './ContactForm.styled';
 
-export class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
+export function ContactForm({ addContacts }) {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const handleInputName = e => {
+    setName(e.currentTarget.value);
   };
 
-  static propTypes = {
-  addContacts: PropTypes.func.isRequired,
-};
-
-  handleInput = e => {
-    this.setState({ [e.currentTarget.name]: e.currentTarget.value });
+    const handleInputNumber = e => {
+    setNumber(e.currentTarget.value);
   };
 
-  addContacts = e => {
+  const addContactsItem = e => {
     e.preventDefault();
-    const { name, number } = this.state;
 
-    this.props.addContacts(name, number);
-    this.setState({ name: '', number: '' });
+    addContacts(name, number);
+    setName('')
+    setNumber('')
   };
-
-  render() {
-    const { name, number } = this.state;
 
     return (
-      <FormStyles onSubmit={this.addContacts}>
+      <FormStyles onSubmit={addContactsItem}>
         <LabelStyles>
           Name
           <InputStyles
@@ -44,7 +39,7 @@ export class ContactForm extends Component {
             required
             placeholder="Ivan"
             value={name}
-            onChange={this.handleInput}
+            onChange={handleInputName}
           />
         </LabelStyles>
         <LabelStyles>
@@ -57,11 +52,14 @@ export class ContactForm extends Component {
             required
             placeholder="111-11-11"
             value={number}
-            onChange={this.handleInput}
+            onChange={handleInputNumber}
           />
         </LabelStyles>
         <ButtonAdd type="submit">Add contact</ButtonAdd>
       </FormStyles>
     );
   }
-}
+
+ContactForm.propTypes = {
+  addContacts: PropTypes.func.isRequired,
+};
